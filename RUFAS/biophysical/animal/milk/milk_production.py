@@ -257,7 +257,7 @@ class MilkProduction:
         lactation curve parameters." Journal of Dairy Science 105.9 (2022): 7525-7538.
 
         """
-        return l_param * np.power(days_in_milk, m_param) * np.exp(-1 * n_param * days_in_milk)
+        return float(l_param * np.power(days_in_milk, m_param) * np.exp(-1 * n_param * days_in_milk))
 
     @staticmethod
     def calc_305_day_milk_yield(l_param: float, m_param: float, n_param: float) -> float:
