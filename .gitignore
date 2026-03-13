@@ -33,6 +33,7 @@ output/*
 output/graphics/*
 !output/output_filters/
 output/output_filters/*
+!output/output_filters/*.txt
 !output/output_filters/report_example.json
 !output/output_filters/_csv_all_variables.txt
 
