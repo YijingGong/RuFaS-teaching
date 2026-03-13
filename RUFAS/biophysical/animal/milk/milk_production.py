@@ -257,7 +257,7 @@ class MilkProduction:
         lactation curve parameters." Journal of Dairy Science 105.9 (2022): 7525-7538.
 
         """
-        return float(l_param * np.power(days_in_milk, m_param) * np.exp(-1 * n_param * days_in_milk))
+        return l_param * np.power(days_in_milk, m_param) * np.exp(-1 * n_param * days_in_milk)
 
     @staticmethod
     def calc_305_day_milk_yield(l_param: float, m_param: float, n_param: float) -> float:
@@ -284,7 +284,13 @@ class MilkProduction:
 
         """
 
-        result, _ = quad(MilkProduction.calculate_daily_milk_production, 1, 305, args=(l_param, m_param, n_param))
+        # scipy 1.16+ passes the integration variable as a 0-d array to the integrand.
+        # Because calculate_daily_milk_production is @njit, float() is not allowed inside it.
+        # We use a thin non-JIT wrapper that extracts the scalar before calling the JIT function.
+        def _integrand(t: float, l: float, m: float, n: float) -> float:
+            return float(MilkProduction.calculate_daily_milk_production(t, l, m, n))
+
+        result, _ = quad(_integrand, 1, 305, args=(l_param, m_param, n_param))
         return result
 
     def _get_milk_production_adjustment(self) -> float:
