@@ -1,6 +1,6 @@
+import numpy as np
 from typing import Any
 from warnings import catch_warnings
-
 from scipy.optimize import minimize
 
 from RUFAS.biophysical.animal.milk.milk_production import MilkProduction
@@ -375,9 +375,14 @@ class LactationCurve:
         }
 
     @staticmethod
-    def _calculate_305_day_milk_yield_error(l_param: float, m_param: float, n_param: float, milk_yield: float) -> float:
-        """Calculates absolute difference between an estimated 305 day milk yield and a predetermined one."""
-        return abs(MilkProduction.calc_305_day_milk_yield(l_param, m_param, n_param) - milk_yield)
+    def _calculate_305_day_milk_yield_error(l_param, m_param: float, n_param: float, milk_yield: float) -> float:
+        """Calculates absolute difference between an estimated 305 day milk yield and a predetermined one.
+
+        Note: l_param may be passed as a 1-element numpy array by scipy.optimize.minimize (L-BFGS-B).
+        We extract the scalar value with float() to ensure compatibility with scipy.integrate.quad.
+        """
+        l_scalar = float(np.asarray(l_param).flat[0])
+        return abs(MilkProduction.calc_305_day_milk_yield(l_scalar, m_param, n_param) - milk_yield)
 
     @classmethod
     def _fit_wood_l_param_to_milk_yield(
