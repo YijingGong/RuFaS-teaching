@@ -1,5 +1,4 @@
 import numpy as np
-from numba import njit
 from scipy.integrate import quad
 
 from RUFAS.biophysical.animal.animal_config import AnimalConfig
@@ -226,7 +225,6 @@ class MilkProduction:
         return milk_production_outputs
 
     @staticmethod
-    @njit
     def calculate_daily_milk_production(days_in_milk: int, l_param: float, m_param: float, n_param: float) -> float:
         """
         Calculates the milk yield on the given day using Wood's lactation curve.
